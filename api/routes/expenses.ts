@@ -52,6 +52,14 @@ export const expensesRoute = new Hono()
 
     return c.json(newExpense, 201);
   })
+  .get("/total-spent", c => {
+    console.log("oi");
+    const totalAmount = fakeExpenses.reduce((prev, curr) => {
+      return prev + curr.amount;
+    }, 0)
+
+    return c.json({ totalAmount });
+  })
   .get("/:id", (c) => {
     const id = c.req.param("id");
     const expense = fakeExpenses.find((expense) => expense.id === id);
@@ -75,4 +83,4 @@ export const expensesRoute = new Hono()
     fakeExpenses.splice(expenseIndex, 1);
 
     return c.json(fakeExpenses[expenseIndex], 200);
-  });
+  })
