@@ -6,11 +6,6 @@ const app = new Hono();
 
 app.use("*", logger());
 
-app.get("/test", (c) => {
-
-  return c.json({ message: "Hello from Hono"});
-});
-
 app.route("/expenses", expensesRoute);
 
 export default app;
