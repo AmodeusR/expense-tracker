@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { v4 as uuid } from "uuid";
+import { randomUUIDv7 as uuid} from "bun";
 import { Hono } from "hono";
 import { z } from "zod";
 
