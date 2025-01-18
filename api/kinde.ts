@@ -73,14 +73,16 @@ export const getUser = createMiddleware<Env>(async (c, next) => {
 
     if (isAuthenticated) {
       const user = await kindeClient.getUserProfile(sessionManager);
-
       c.set("user", user);
-      await next();
 
-      return c.json({ user });
+      await next();
     }
+    
+    return c.json({ error: "Unauthorized" }, 401);
   } catch (error) {
+    console.log("An error happened:");
     console.log(error);
+    
     return c.json({ error: "Unauthorized" }, 401);
   }
 });
