@@ -20,6 +20,9 @@ export const Route = createRootRoute({
         <Link to="/create-expense" className={linkStyles}>
           Create Expense
         </Link>
+        <Link to="/profile" className={linkStyles}>
+          Profile
+        </Link>
       </nav>
       <hr className="border-zinc-800" />
       <Outlet />
