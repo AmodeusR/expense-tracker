@@ -29,6 +29,6 @@ authRoute.get("/logout", async (c) => {
 
 authRoute.get("/me", getUser, async (c) => {
   const user = c.var.user;
-  
-  return c.json(user);
+
+  return c.json({ user });
 })
