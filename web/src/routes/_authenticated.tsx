@@ -1,3 +1,4 @@
+import { loginPath } from "@/lib/api";
 import { userQueryOptions } from "@/lib/api.queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
@@ -30,7 +31,7 @@ function Login() {
   return (
     <div className="mx-auto text-center">
       <p>You're not logged in!</p>
-      <a href="/api/login" className="font-semibold text-blue-500 hover:text-blue-300 transition-colors">
+      <a href={loginPath} className="font-semibold text-blue-500 hover:text-blue-300 transition-colors">
         Log in now
       </a>
     </div>
