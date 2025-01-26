@@ -4,25 +4,23 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
-import { getTotalSpent } from "@/services/expenses";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+} from '@/components/ui/card'
+import { getTotalSpent } from '@/services/expenses'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/_authenticated/')({
   component: Index,
-});
-
-
+})
 
 function Index() {
   const { isPending, data, error } = useQuery({
-    queryKey: ["get-total-spent"],
+    queryKey: ['get-total-spent'],
     queryFn: getTotalSpent,
-  });
+  })
 
   return (
-    <div className="bg-background m-10 flex flex-col items-center">
+    <div className="bg-background flex flex-col items-center">
       <Card className="w-[300px] p-2">
         <CardHeader>
           <CardTitle>Teste</CardTitle>
@@ -30,12 +28,12 @@ function Index() {
         </CardHeader>
         <CardContent>
           {error
-            ? "Something went wrong"
+            ? 'Something went wrong'
             : isPending
-              ? "..."
+              ? '...'
               : data?.totalAmount}
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

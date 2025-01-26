@@ -1,39 +1,39 @@
-import { Button } from "@/components/ui/button";
-import { InputWithLabel } from "@/components/ui/InputWithLabel";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useForm } from "@tanstack/react-form";
-import { FormEventHandler } from "react";
-import { api } from "@/lib/api";
+import { Button } from '@/components/ui/button'
+import { InputWithLabel } from '@/components/ui/InputWithLabel'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useForm } from '@tanstack/react-form'
+import { FormEventHandler } from 'react'
+import { api } from '@/lib/api'
 
-export const Route = createFileRoute("/create-expense")({
+export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
-});
+})
 
 function CreateExpense() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const form = useForm({
     defaultValues: {
-      title: "",
+      title: '',
       amount: 0,
     },
     onSubmit: async ({ value }) => {
       const res = await api.expenses.$post({
-        json: value
+        json: value,
       })
 
       if (!res.ok) {
-        throw new Error("A server error has occurred")
+        throw new Error('A server error has occurred')
       }
 
-      navigate({to: "/expenses"});
+      navigate({ to: '/expenses' })
     },
-  });
+  })
 
   const submitForm: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    form.handleSubmit();
-  };
+    e.preventDefault()
+    e.stopPropagation()
+    form.handleSubmit()
+  }
   return (
     <div className="flex flex-col items-center mt-10 flex-1 gap-4 mx-5">
       <h2 className="text-2xl font-semibold">Create expense</h2>
@@ -55,7 +55,7 @@ function CreateExpense() {
                 value={field.state.value}
               />
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
-                <em>{field.state.meta.errors.join(", ")}</em>
+                <em>{field.state.meta.errors.join(', ')}</em>
               ) : null}
             </>
           )}
@@ -74,7 +74,7 @@ function CreateExpense() {
                 value={String(field.state.value)}
               />
               {field.state.meta.isTouched && field.state.meta.errors.length ? (
-                <em>{field.state.meta.errors.join(", ")}</em>
+                <em>{field.state.meta.errors.join(', ')}</em>
               ) : null}
             </>
           )}
@@ -88,11 +88,11 @@ function CreateExpense() {
               className="w-full mt-4"
               disabled={!canSubmit}
             >
-              {isSubmitting ? "Creating expense..." : "Create expense"}
+              {isSubmitting ? 'Creating expense...' : 'Create expense'}
             </Button>
           )}
         />
       </form>
     </div>
-  );
+  )
 }
