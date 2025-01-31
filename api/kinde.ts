@@ -41,7 +41,7 @@ export const honoSessionManager = (c: Context): SessionManager => ({
     const cookiesOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      sameSite: "None",
     } as const;
 
     if (typeof itemValue === "string") {
