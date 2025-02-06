@@ -15,7 +15,8 @@ export const authRoute = new Hono()
   .get("/callback", async (c) => {
     const url = new URL(c.req.url);
     await kindeClient.handleRedirectToApp(honoSessionManager(c), url);
-    return c.redirect("/");
+
+    return c.redirect(process.env.HOME_URL!);
   })
   .get("/logout", async (c) => {
     const logoutUrl = await kindeClient.logout(honoSessionManager(c));
