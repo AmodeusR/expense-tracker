@@ -22,7 +22,12 @@ function Profile() {
     <div className="flex flex-col items-center gap-4">
       <h1>Profile</h1>
       <p>Welcome, {data?.user.given_name}</p>
-      <a href="api/logout" className="font-semibold text-blue-500 hover:text-blue-300 transition-colors">Logout</a>
+      <a
+        href={api.logout.$url().href}
+        className="font-semibold text-blue-500 hover:text-blue-300 transition-colors"
+      >
+        Logout
+      </a>
     </div>
   );
 }
