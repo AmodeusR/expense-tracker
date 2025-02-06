@@ -5,5 +5,4 @@ const client = hc<ApiRoutes>("/");
 
 export const api = client.api;
 
-export const loginPath = "https://expense-tracker-ug6r.onrender.com/api/login";
-export const registerPath = "https://expense-tracker-ug6r.onrender.com/api/register";
+export const api = client.api;
