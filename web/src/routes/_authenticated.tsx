@@ -1,4 +1,4 @@
-import { loginPath } from "@/lib/api";
+import { api } from "@/lib/api";
 import { userQueryOptions } from "@/lib/api.queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
@@ -8,6 +8,7 @@ export const Route = createFileRoute("/_authenticated")({
 
     try {
       const data = await queryClient.fetchQuery(userQueryOptions);
+      
       return data;
     } catch (error) {
       console.error(error);
@@ -31,7 +32,7 @@ function Login() {
   return (
     <div className="mx-auto text-center">
       <p>You're not logged in!</p>
-      <a href={loginPath} className="font-semibold text-blue-500 hover:text-blue-300 transition-colors">
+      <a href={api.login.$url().href} className="font-semibold text-blue-500 hover:text-blue-300 transition-colors">
         Log in now
       </a>
     </div>
