@@ -1,26 +1,26 @@
-import { columns } from '@/components/expenses/columns'
-import DataTable from '@/components/expenses/datatable'
-import SkeletonExpenses from '@/components/expenses/skeleton'
-import { getAllExpenses } from '@/services/expenses'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { columns } from "@/components/expenses/columns";
+import DataTable from "@/components/expenses/datatable";
+import SkeletonExpenses from "@/components/expenses/skeleton";
+import { getAllExpenses } from "@/services/expenses";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_authenticated/expenses')({
+export const Route = createFileRoute("/_authenticated/expenses")({
   component: Expenses,
-})
+});
 
 function Expenses() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['get-all-expenses'],
+    queryKey: ["get-all-expenses"],
     queryFn: getAllExpenses,
-  })
+  });
 
   if (isLoading) {
     return (
       <div className="mt-10">
         <SkeletonExpenses />
       </div>
-    )
+    );
   }
 
   return (
@@ -32,5 +32,5 @@ function Expenses() {
         <DataTable data={data} columns={columns} />
       )}
     </div>
-  )
+  );
 }
