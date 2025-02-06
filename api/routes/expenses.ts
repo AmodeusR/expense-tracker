@@ -64,7 +64,6 @@ export const expensesRoute = new Hono()
     const id = c.req.param("id");
     const expense = fakeExpenses.find((expense) => expense.id === id);
 
-    console.log(expense);
     if (!expense) {
       return c.json({ error: "Expense not found" }, 404);
     }
@@ -72,8 +71,7 @@ export const expensesRoute = new Hono()
     return c.json(expense);
   })
   .delete("/:id", getUser, (c) => {
-    const id = c.req.param("id");
-    console.log(id);
+    const id = c.req.param("id");    
     const expenseIndex = fakeExpenses.findIndex((expense) => expense.id === id);
 
     if (expenseIndex == -1) {
