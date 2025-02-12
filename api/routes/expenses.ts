@@ -1,68 +1,63 @@
 import { zValidator } from "@hono/zod-validator";
-import { randomUUIDv7 as uuid} from "bun";
 import { Hono } from "hono";
 import { z } from "zod";
 import { getUser } from "../kinde";
+import { db } from "../db";
+import { expensesTable } from "../db/schemas/expenses";
+import { desc, eq } from "drizzle-orm";
 
 const expenseSchema = z.object({
   id: z.string(),
   title: z.string(),
-  amount: z.number(),
+  amount: z.string(),
 });
 
 type Expense = z.infer<typeof expenseSchema>;
 
-const fakeExpenses: Expense[] = [
-  {
-    id: "5a763ed2-7168-4ccd-9e47-710ebd56fc0d",
-    title: "Groceries",
-    amount: 150.75,
-  },
-  {
-    id: "f982950e-a833-4048-9219-ed54e266c72d",
-    title: "Electricity Bill",
-    amount: 85.6,
-  },
-  {
-    id: "b17eecb5-e521-4e01-9590-ad3701c13cab",
-    title: "Internet Subscription",
-    amount: 49.99,
-  },
-  {
-    id: "24c48311-673e-457b-85f7-3e5fa0e6ea3c",
-    title: "Transportation",
-    amount: 30,
-  },
-  {
-    id: "8a3e7c15-6092-4546-8093-a4ecfdbe4361",
-    title: "Dining Out",
-    amount: 60.25,
-  },
-];
-
 const createPostSchema = expenseSchema.omit({ id: true });
 
 export const expensesRoute = new Hono()
-  .get("/", getUser, (c) => {
-    return c.json({ expenses: fakeExpenses });
+  .get("/", getUser, async (c) => {
+    const expenses = await db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, c.var.user.id))
+      .orderBy(desc(expensesTable.createdAt))
+      .limit(15);
+
+    return c.json({ expenses });
   })
   .post("/", getUser, zValidator("json", createPostSchema), async (c) => {
-    const newExpense = await c.req.valid("json");
+    const newExpense = c.req.valid("json");
 
-    fakeExpenses.push({ ...newExpense, id: uuid() });
+    const result = await db
+      .insert(expensesTable)
+      .values({
+        ...newExpense,
+        userId: c.var.user.id,
+      })
+      .returning();
 
-    return c.json(newExpense, 201);
+    return c.json(result, 201);
   })
-  .get("/total-spent", getUser, c => {
-    const totalAmount = fakeExpenses.reduce((prev, curr) => {
-      return prev + curr.amount;
-    }, 0)
+  .get("/total-spent", getUser, async (c) => {
+    const expenses = await db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.userId, c.var.user.id));
+
+    const totalAmount = expenses.reduce((prev, curr) => {
+      return prev + Number(curr.amount);
+    }, 0);
 
     return c.json({ totalAmount });
   })
   .get("/:id", getUser, (c) => {
-    const id = c.req.param("id");
-    const expense = fakeExpenses.find((expense) => expense.id === id);
+    const id = Number(c.req.param("id"));
+    const expense = db
+      .select()
+      .from(expensesTable)
+      .where(eq(expensesTable.id, id));
 
     if (!expense) {
       return c.json({ error: "Expense not found" }, 404);
@@ -70,15 +65,17 @@ export const expensesRoute = new Hono()
 
     return c.json(expense);
   })
-  .delete("/:id", getUser, (c) => {
-    const id = c.req.param("id");    
-    const expenseIndex = fakeExpenses.findIndex((expense) => expense.id === id);
+  .delete("/:id", getUser, async (c) => {
+    const id = Number(c.req.param("id"));
 
-    if (expenseIndex == -1) {
-      return c.json({ error: "Not found" }, 404);
+    const deletedExpense = await db
+      .delete(expensesTable)
+      .where(eq(expensesTable.id, id))
+      .returning();
+      
+    if (!deletedExpense[0]) {
+      return c.notFound();
     }
 
-    fakeExpenses.splice(expenseIndex, 1);
-
-    return c.json(fakeExpenses[expenseIndex], 200);
-  })
+    return c.json(deletedExpense[0], 200);
+  });
