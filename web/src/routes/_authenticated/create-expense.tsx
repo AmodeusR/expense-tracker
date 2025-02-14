@@ -10,8 +10,8 @@ export const Route = createFileRoute('/_authenticated/create-expense')({
 })
 
 function CreateExpense() {
-  const navigate = useNavigate()
-  const form = useForm({
+  const navigate = useNavigate();
+  const form = useForm<ExpenseSchemaType>({
     defaultValues: {
       title: '',
       amount: "0",
@@ -27,7 +27,11 @@ function CreateExpense() {
 
       navigate({ to: '/expenses' })
     },
-  })
+    validators: {
+      onChange: expenseSchema,
+      onMount: expenseSchema,
+    },
+  });
 
   const submitForm: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
