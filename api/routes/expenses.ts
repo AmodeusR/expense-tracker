@@ -1,23 +1,16 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { z } from "zod";
 import { getUser } from "../kinde";
 import { db } from "../db";
-import { expensesTable } from "../db/schemas/expenses";
+import { expensesTable, insertExpensesSchema } from "../db/schemas/expenses";
 import { desc, eq } from "drizzle-orm";
+import { expenseSchema } from "../shared/expenses.types";
 
-const expenseSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  amount: z.string(),
-});
 
-type Expense = z.infer<typeof expenseSchema>;
-
-const createPostSchema = expenseSchema.omit({ id: true });
 
 export const expensesRoute = new Hono()
   .get("/", getUser, async (c) => {
+    // Get all expenses
     const expenses = await db
       .select()
       .from(expensesTable)
@@ -27,20 +20,25 @@ export const expensesRoute = new Hono()
 
     return c.json({ expenses });
   })
-  .post("/", getUser, zValidator("json", createPostSchema), async (c) => {
+  .post("/", getUser, zValidator("json", expenseSchema), async (c) => {
+    // Create a new expense
     const newExpense = c.req.valid("json");
+
+    const validatedExpense = insertExpensesSchema.safeParse({...newExpense, userId: c.var.user.id});
+
+    if (!validatedExpense.success) {
+      return c.json({message: "Invalid expense", error: validatedExpense.error}, 400);
+    }
 
     const result = await db
       .insert(expensesTable)
-      .values({
-        ...newExpense,
-        userId: c.var.user.id,
-      })
+      .values(validatedExpense.data)
       .returning();
 
     return c.json(result, 201);
   })
   .get("/total-spent", getUser, async (c) => {
+    // Get total spent
     const expenses = await db
       .select()
       .from(expensesTable)
@@ -53,6 +51,7 @@ export const expensesRoute = new Hono()
     return c.json({ totalAmount });
   })
   .get("/:id", getUser, (c) => {
+    // Get a single expense
     const id = Number(c.req.param("id"));
     const expense = db
       .select()
@@ -66,6 +65,7 @@ export const expensesRoute = new Hono()
     return c.json(expense);
   })
   .delete("/:id", getUser, async (c) => {
+    // Delete a single expense
     const id = Number(c.req.param("id"));
 
     const deletedExpense = await db
