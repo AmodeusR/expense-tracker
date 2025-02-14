@@ -31,7 +31,7 @@ function Index() {
             ? 'Something went wrong'
             : isPending
               ? '...'
-              : data?.totalAmount}
+              : data?.totalAmount.toFixed(2)}
         </CardContent>
       </Card>
     </div>
