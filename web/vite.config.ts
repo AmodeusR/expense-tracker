@@ -22,7 +22,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ["zod"],
+      external: ["zod", "drizzle-orm/pg-core", "pg"],
     },
   },
 });
