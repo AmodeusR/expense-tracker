@@ -19,10 +19,5 @@ export default defineConfig({
         // rewrite: (path) => path.replace("api", "")
       },
     },
-  },
-  build: {
-    rollupOptions: {
-      external: ["zod", "drizzle-orm/pg-core", "pg", "drizzle-zod"],
-    },
-  },
+  }
 });
