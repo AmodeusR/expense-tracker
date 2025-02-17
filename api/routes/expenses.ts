@@ -47,16 +47,18 @@ export const expensesRoute = new Hono()
     const totalAmount = expenses.reduce((prev, curr) => {
       return prev + Number(curr.amount);
     }, 0);
-
+    
     return c.json({ totalAmount });
   })
-  .get("/:id", getUser, (c) => {
+  .get("/:id", getUser, async (c) => {
     // Get a single expense
     const id = Number(c.req.param("id"));
-    const expense = db
+    
+    const expense = await db
       .select()
       .from(expensesTable)
-      .where(eq(expensesTable.id, id));
+      .where(eq(expensesTable.id, id))
+      .then(res => res[0]);
 
     if (!expense) {
       return c.json({ error: "Expense not found" }, 404);
@@ -67,7 +69,6 @@ export const expensesRoute = new Hono()
   .delete("/:id", getUser, async (c) => {
     // Delete a single expense
     const id = Number(c.req.param("id"));
-
     const deletedExpense = await db
       .delete(expensesTable)
       .where(eq(expensesTable.id, id))
