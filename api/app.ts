@@ -11,7 +11,7 @@ app.use(
   "*",
   cors({
     origin: ["http://localhost:5173", "http://localhost:4173", "https://my-expense-tracker.pages.dev"],
-    allowMethods: ["GET", "POST"],
+    allowMethods: ["GET", "POST", "DELETE"],
     credentials: true
   })
 );
