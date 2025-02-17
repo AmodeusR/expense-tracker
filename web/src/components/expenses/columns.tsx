@@ -1,6 +1,9 @@
 import { Expense } from "@/lib/api.types";
 import { ColumnDef } from "@tanstack/react-table";
-
+import { Trash } from "lucide-react";
+import { Button } from "../ui/button";
+import { deleteExpense } from "@/services/expenses";
+import { queryClient } from "@/lib/queryClient";
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -23,5 +26,20 @@ export const columns: ColumnDef<Expense>[] = [
 
       return <span className="font-medium">{formatted}</span>
     }
-  }
+  },
+  {
+    id: "Delete",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const expense = row.original;
+
+      const onDelete = async () => {
+        await deleteExpense(expense.id);
+        await queryClient.invalidateQueries({queryKey: ["get-all-expenses"]});
+      }
+            
+      return (
+        <Button variant="outline" onClick={onDelete}><Trash /></Button>
+      )
+  }}
 ]
