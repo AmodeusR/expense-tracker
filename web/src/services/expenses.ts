@@ -21,4 +21,12 @@ export const getAllExpenses = async () => {
   const data = await response.json();
 
   return data.expenses;
-}
+};
+
+export const deleteExpense = async (id: number) => {
+  const response = await api.expenses[":id"].$delete({ param: { id: String(id) } });
+
+  if (!response.ok) {
+    throw new Error("Server error on deletion");
+  }
+};
